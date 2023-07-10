@@ -1,0 +1,123 @@
+{extends file="admin-layout.tpl"}
+
+{block name="after-bootstrap-css"}
+{stylesheets file='assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css'}
+<link rel="stylesheet" href="{$asset_url}">
+{/stylesheets}
+{/block}
+
+{block name="no-return-functions"}
+{$admin_current_location = 'modules'}
+{/block}
+
+{block name="page-title"}{intl l='Modules'}{/block}
+
+{block name="check-resource"}admin.module{/block}
+{block name="check-access"}view{/block}
+
+{block name="main-content"}
+<div id="wrapper" class="container">
+
+    {if isset($general_error)}
+    <div class="alert alert-danger">
+        {$general_error}
+    </div>
+    {/if}
+
+
+
+
+
+    <div class="general-block-decorator">
+        {flash type='remove-cart-result'}
+        <div class="alert alert-success">
+            {$MESSAGE}
+        </div>
+        {/flash}
+        <div class="alert alert-info">
+            {intl l='<b>Warning :</b> this operation may take a while for huge databases. You should do it in several times. Please wait until success or error message is displayed.' d='admintools.bo.default'}
+        </div>
+        <div class="row">
+            <div class="col-md-12 title title-without-tabs">
+                {intl l="Remove useless carts" d='admintools.bo.default'}
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div class="row">
+                <div class="col-md-6">
+
+                    {form name='removeuselesscart_form'}
+                    <form action="{url path='admin/module/AdminTools/remove'}" method="post">
+
+                        {form_hidden_fields form=$form}
+                        {render_form_field form=$form field="success_url" value={url path="/admin/module/AdminTools"}}
+
+                        <!-- Start interval date -->
+                        <div class="form-group">
+                            {form_field form=$form field='start_date'}
+                            <label for="startDate">{$label}</label>
+                            <div class="input-group">
+                                <input type="text" name="{$name}" value="{'-1 week'|date_format:"%Y-%m-%d %H:%M:%S"}" required class="form-control" id="startDate">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                            </div>
+                            {/form_field}
+                        </div>
+
+                        <div class="checkbox">
+                            {form_field form=$form field='remove_all'}
+                            <label>
+                                <input type="checkbox" name="{$name}"> {$label}
+                            </label>
+                            {/form_field}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">{intl l='OK' d='admintools.bo.default'}</button>
+                    </form>
+                    {/form}
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="general-block-decorator">
+        {flash type='remove-admin-logs'}
+        <div class="alert alert-success">
+            {$MESSAGE}
+        </div>
+        {/flash}
+        <div class="row">
+            <div class="col-md-12 title title-without-tabs">
+                {intl l="Remove all admin logs" d='admintools.bo.default'}
+            </div>
+        </div>
+        {form name='removelogadmin_form'}
+            {form_hidden_fields form=$form}
+            <form action="{url path='/admin/module/AdminTools/logs-admin/remove'}" method="post">
+                <button class="btn btn-primary" type="submit" >{intl l='Remove all admin logs' d='admintools.bo.default'}</button>
+            </form>
+        {/form}
+    </div>
+</div>
+{/block}
+
+{block name="javascript-initialization"}
+{javascripts file='assets/js/moment-with-locales.min.js'}
+<script src="{$asset_url}"></script>
+{/javascripts}
+
+{javascripts file='assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js'}
+<script src="{$asset_url}"></script>
+{/javascripts}
+
+<script>
+    (function($) {
+        {$langcode = {lang attr="code"}|substr:0:2}
+
+        $('#startDate').datetimepicker({
+            locale: "{$langcode}",
+            format: "YYYY-MM-DD HH:mm:ss"
+        });
+    })(jQuery);
+</script>
+{/block}
