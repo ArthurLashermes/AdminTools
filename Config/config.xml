@@ -36,7 +36,21 @@
         </service>
     </services>
 
+    <forms>
+        <form name="admin-order-creation.create" class="AdminTools\Form\OrderCreateForm" />
+    </forms>
 
+    <hooks>
+        <hook id="adminordercreation.hook.back.order" class="AdminTools\Hook\Back\OrderHook">
+            <tag name="hook.event_listener" event="orders.table-header" type="back" method="onOrdersTableHeader" />
+            <tag name="hook.event_listener" event="orders.js" type="back" method="onOrderJs" />
+        </hook>
+
+        <hook id="adminordercreation.hook.back.order.edit" class="AdminTools\Hook\Back\OrderEditHook">
+            <tag name="hook.event_listener" event="order.edit-js" type="back" method="onOrderAddButtonJs" />
+            <tag name="hook.event_listener" event="order.edit-js" type="back" method="onOrderJs" />
+        </hook>
+    </hooks>
 
     <!--
     <services>

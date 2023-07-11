@@ -13,48 +13,60 @@ class AdminTools extends BaseModule
     /** @var string */
     const DOMAIN_NAME = 'admintools';
 
-    /*
-     * You may now override BaseModuleInterface methods, such as:
-     * install, destroy, preActivation, postActivation, preDeactivation, postDeactivation
-     *
-     * Have fun !
-     */
+    const CONFIG_KEY_DEFAULT_NEW_CREDIT_NOTE_STATUS_ID = 'default-new-credit-note-status-id';
+    const CONFIG_KEY_DEFAULT_NEW_CREDIT_NOTE_TYPE_ID = 'default-new-credit-note-type-id';
+    const CONFIG_KEY_PAYED_ORDER_MINIMUM_STATUS_ID = 'payed-order-minimum-status-id';
+    const CONFIG_KEY_INVOICE_REF_TYPE = 'invoice-ref-type'; // 0 for default thelia, 1 for separate
+    const CONFIG_KEY_INVOICE_REF_INCREMENT = 'invoice-ref-increment';
 
-    /**
-     * Defines how services are loaded in your modules
-     *
-     * @param ServicesConfigurator $servicesConfigurator
-     */
+    const CONFIG_DEFAULT_VALUE_DEFAULT_NEW_CREDIT_NOTE_STATUS_ID = 4;
+    const CONFIG_DEFAULT_VALUE_DEFAULT_NEW_CREDIT_NOTE_TYPE_ID = 7;
+    const CONFIG_DEFAULT_VALUE_PAYED_ORDER_MINIMUM_STATUS_ID = 2;
+    const CONFIG_DEFAULT_VALUE_INVOICE_REF_TYPE = 0;
+
+    public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
+    {
+        if (null === self::getConfigValue(self::CONFIG_KEY_DEFAULT_NEW_CREDIT_NOTE_STATUS_ID)) {
+            self::setConfigValue(
+                self::CONFIG_KEY_DEFAULT_NEW_CREDIT_NOTE_STATUS_ID,
+                self::CONFIG_DEFAULT_VALUE_DEFAULT_NEW_CREDIT_NOTE_STATUS_ID
+            );
+        }
+
+        if (null === self::getConfigValue(self::CONFIG_KEY_DEFAULT_NEW_CREDIT_NOTE_TYPE_ID)) {
+            self::setConfigValue(
+                self::CONFIG_KEY_DEFAULT_NEW_CREDIT_NOTE_TYPE_ID,
+                self::CONFIG_DEFAULT_VALUE_DEFAULT_NEW_CREDIT_NOTE_TYPE_ID
+            );
+        }
+
+        if (null === self::getConfigValue(self::CONFIG_KEY_PAYED_ORDER_MINIMUM_STATUS_ID)) {
+            self::setConfigValue(
+                self::CONFIG_KEY_PAYED_ORDER_MINIMUM_STATUS_ID,
+                self::CONFIG_DEFAULT_VALUE_PAYED_ORDER_MINIMUM_STATUS_ID
+            );
+        }
+
+        if (null === self::getConfigValue(self::CONFIG_KEY_INVOICE_REF_TYPE)) {
+            self::setConfigValue(
+                self::CONFIG_KEY_INVOICE_REF_TYPE,
+                self::CONFIG_DEFAULT_VALUE_INVOICE_REF_TYPE
+            );
+        }
+
+        if (null === self::getConfigValue(self::CONFIG_KEY_INVOICE_REF_INCREMENT)) {
+            self::setConfigValue(
+                self::CONFIG_KEY_INVOICE_REF_INCREMENT,
+                1
+            );
+        }
+    }
+
     public static function configureServices(ServicesConfigurator $servicesConfigurator): void
     {
         $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
             ->exclude([THELIA_MODULE_DIR . ucfirst(self::getModuleCode()). "/I18n/*"])
             ->autowire(true)
             ->autoconfigure(true);
-    }
-
-    /**
-     * Execute sql files in Config/update/ folder named with module version (ex: 1.0.1.sql).
-     *
-     * @param $currentVersion
-     * @param $newVersion
-     * @param ConnectionInterface $con
-     */
-    public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
-    {
-        $finder = Finder::create()
-            ->name('*.sql')
-            ->depth(0)
-            ->sortByName()
-            ->in(__DIR__.DS.'Config'.DS.'update');
-
-        $database = new Database($con);
-
-        /** @var \SplFileInfo $file */
-        foreach ($finder as $file) {
-            if (version_compare($currentVersion, $file->getBasename('.sql'), '<')) {
-                $database->insertSql(null, [$file->getPathname()]);
-            }
-        }
     }
 }
